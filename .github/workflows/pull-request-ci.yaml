@@ -1,9 +1,11 @@
 name: Pull Request CI
 on: pull_request
 jobs:
+  install-packages:
+    uses: 0x009922/test-format-on-pr/.github/workflows/setup=pnpm.yaml@v1
+
   check:
     runs-on: ubuntu-latest
-    uses: 0x009922/test-format-on-pr/.github/workflows/setup=pnpm.yaml@v1
     steps:
       - name: Check formatting
         run: pnpm format:check
