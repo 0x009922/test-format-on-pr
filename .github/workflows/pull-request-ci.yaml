@@ -1,23 +1,49 @@
 name: Pull Request CI
 on: pull_request
 jobs:
-  install:
-    uses: 0x009922/test-format-on-pr/.github/workflows/setup-pnpm.yaml@test-1
-
-  check:
-    needs: install
+  run:
     runs-on: ubuntu-latest
     steps:
-      - name: Download install-output artifact
-        uses: actions/download-artifact@master
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
         with:
-          name: install-output
+          node-version: 16
+
+      # --- Install with caching
+      # https://github.com/pnpm/action-setup#use-cache-to-reduce-installation-time
+
+      - uses: pnpm/action-setup@v2.0.1
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 7
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: |
+            ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+            /home/runner/.cache/Cypress
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install packages
+        run: pnpm install
 
       - name: Check formatting
+        id: check
         run: pnpm format:check
 
       - name: Fix documentation formatting
-        if: ${{ failure() }}
+        if: ${{ failure() && steps.check.conslusion == 'failure' }}
         id: fix-format
         run: pnpm format:fix
           git config --global user.email "${GITHUB_ACTOR}@https://users.noreply.github.com/"
