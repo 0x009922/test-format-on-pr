@@ -1,0 +1,16 @@
+{
+  "name": "test-format-on-pr",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "format:fix": "prettier --write src",
+    "format:check": "prettier --list-different src"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "prettier": "^2.7.1"
+  }
+}
