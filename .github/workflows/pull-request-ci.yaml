@@ -2,7 +2,7 @@ name: Pull Request CI
 on: pull_request
 jobs:
   install-packages:
-    uses: 0x009922/test-format-on-pr/.github/workflows/setup=pnpm.yaml@master
+    uses: 0x009922/test-format-on-pr/.github/workflows/setup-pnpm.yaml@master
 
   check:
     runs-on: ubuntu-latest
