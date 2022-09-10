@@ -43,7 +43,7 @@ jobs:
         run: pnpm format:check
 
       - name: Fix documentation formatting
-        if: ${{ failure() && steps.check.conslusion == 'failure' }}
+        if: ${{ failure() && steps.check.conclusion == 'failure' }}
         id: fix-format
         run: pnpm format:fix
           git config --global user.email "${GITHUB_ACTOR}@https://users.noreply.github.com/"
