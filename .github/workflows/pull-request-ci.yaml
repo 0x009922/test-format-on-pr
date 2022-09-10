@@ -8,6 +8,11 @@ jobs:
     needs: install
     runs-on: ubuntu-latest
     steps:
+      - name: Download install-output artifact
+        uses: actions/download-artifact@master
+        with:
+          name: install-output
+
       - name: Check formatting
         run: pnpm format:check
 

@@ -39,3 +39,8 @@ jobs:
 
       - name: Install packages
         run: pnpm install
+
+      - name: Create install-output artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: install-output
