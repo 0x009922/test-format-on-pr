@@ -1,0 +1,33 @@
+name: Pull Request CI
+on:
+  pull_request:
+    branches: [main]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: 0x009922/test-format-on-pr/.github/workflows/setup=pnpm.yaml@v1
+
+      - name: Check formatting
+        run: pnpm format:check
+
+      - name: Fix documentation formatting
+        if: ${{ failure() }}
+        id: fix-format
+        run: pnpm format:fix
+          git config --global user.email "${GITHUB_ACTOR}@https://users.noreply.github.com/"
+          git config --global user.name "${GITHUB_ACTOR}"
+          git add --all
+          git commit -m "Apply format fixed on $(date +'%Y-%m-%d %H:%M:%S')"
+          git push -f -q https://git:${{ secrets.github_token }}@github.com/${{ github.repository }} master:format-autofix/${{ github.head_ref }}
+
+      - name: Open a formatting PR
+        uses: rematocorp/open-pull-request-action@v1
+        id: open-format-pr
+        if: ${{ steps.fix-format.conclusion == 'success' }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          from-branch: format-autofix/${{ github.head_ref }}
+          to-branch: ${{ github.actor }}:${{ github.head_ref }}
+          repository-owner: "0x009922"
+          repository: test-format-on-pr
