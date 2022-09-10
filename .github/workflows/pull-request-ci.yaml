@@ -3,9 +3,8 @@ on: pull_request
 jobs:
   check:
     runs-on: ubuntu-latest
+    uses: 0x009922/test-format-on-pr/.github/workflows/setup=pnpm.yaml@v1
     steps:
-      - uses: 0x009922/test-format-on-pr/.github/workflows/setup=pnpm.yaml@v1
-
       - name: Check formatting
         run: pnpm format:check
 
